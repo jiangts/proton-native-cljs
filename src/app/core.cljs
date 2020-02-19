@@ -1,5 +1,5 @@
 (ns app.core
-  (:require [uix.core.alpha :as uix.core]
+  (:require [reagent.core :as r]
             [clojure.string :as str]))
 
 (def react (js/require "react"))
@@ -155,27 +155,28 @@
        :on-press #(update-operator state '+)}]]))
 
 (defn calculator []
-  (let [state (uix.core/state {:secondary 0 :primary 0 :operator ""
+  (let [state (r/atom {:secondary 0 :primary 0 :operator ""
                                :changed? false :decimal? false})]
-    [:<>
-     [:> View {:style {:width "100%"
-                       :height "30%"
-                       :justify-content :flex-end
-                       :align-items :flex-end}}
-      [:> Text {:style {:color :white
-                        :font-size 80
-                        :text-align :right
-                        :margin-right 35
-                        :margin-bottom 15
-                        :font-weight 200}}
-       (if (>= (count (str (:primary @state))) 7)
-         (.toExponential ^js/Number (:primary @state) 4)
-         (:primary @state))]]
-     (->> (gen-buttons state)
-          (map-indexed
-            (fn [idx group]
-              ^{:key idx}
-              [buttons-group idx group])))]))
+    (fn []
+      [:<>
+       [:> View {:style {:width "100%"
+                         :height "30%"
+                         :justify-content :flex-end
+                         :align-items :flex-end}}
+        [:> Text {:style {:color :white
+                          :font-size 80
+                          :text-align :right
+                          :margin-right 35
+                          :margin-bottom 15
+                          :font-weight 200}}
+         (if (>= (count (str (:primary @state))) 7)
+           (.toExponential ^js/Number (:primary @state) 4)
+           (:primary @state))]]
+       (->> (gen-buttons state)
+         (map-indexed
+           (fn [idx group]
+             ^{:key idx}
+             [buttons-group idx group])))])))
 
 (defn app []
   [:> App
@@ -187,8 +188,8 @@
 ;; For some reason root components should be React class
 ;; to make hot-reloading work
 (def root
-  (uix.core/create-class
-    {:prototype {:render #(uix.core/as-element (app))}}))
+  (r/create-class
+    {:render (fn [] [app])}))
 
 (defn main []
   (.registerComponent

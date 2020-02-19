@@ -5,12 +5,13 @@
   "license": "MIT",
   "scripts": {
     "dev": "shadow-cljs watch app",
-    "build": "shadow-cljs release app && yarn package",
+    "build": "shadow-cljs release app && npm run package",
     "package": "nexe out/main.js -o calculator"
   },
   "dependencies": {
     "proton-native": "2.0.4",
-    "react": "16.12.0"
+    "react": "16.12.0",
+    "react-dom": "16.9.0"
   },
   "devDependencies": {
     "nexe": "3.3.2",
